@@ -31,7 +31,7 @@ OpenFaaS is a platform that tries to *Make Serverless Functions Simple* (and it 
 Before we start writing any code, let's get it up and running with OpenFaaS. Since you already have a Kubernetes cluster, follow [this tutorial](https://github.com/openfaas/faas-netes/blob/master/HELM.md) to deploy it using helm. Once you have it up and running install the [faas-cli](https://github.com/openfaas/faas-netes/blob/master/chart/openfaas/README.md#verify-the-installation) on your machine and [authenticate to your OpenFaaS installation](https://github.com/openfaas/faas-cli#get-started-install-the-cli).
 
 ### Functions and templates
-All functions in OpenFaaS belong to a [template](https://github.com/openfaas/templates). There are many [templates for different languages and tools](https://github.com/openfaas/templates) already provided. But if none of those meet your needs, it is very easy to create a new one. This is what we'll be doing article.
+All functions in OpenFaaS belong to a [template](https://github.com/openfaas/templates). There are many [templates for different languages and tools](https://github.com/openfaas/templates) already provided. But if none of those meet your needs, it is very easy to create a new one. This is what we'll be doing in this article.
 
 ### Writing our function
 To perform the face detection we are going to use GoCV and a pre-trained Caffe neural network. This means that our function needs to have OpenCV installed and the model+config files of the neural network. We could use the [dockerfile template](https://github.com/openfaas/templates/tree/master/template/dockerfile) and install our dependencies there, but I like the idea of having a *gocv template* with built-in models for anyone who wants to make use of it.
@@ -45,16 +45,16 @@ Let's start writing our function! The users will provide the image they want to 
     1. decode the image,
     2. run a pass through the neural network,
     3. draw rectangles around all of the faces that were found, 
-    4. and encode the image back and return the results.
+    4. encode the image and return the results.
     
 The code to do the detection was extracted from [this example](https://github.com/hybridgroup/gocv/blob/master/cmd/dnn-detection/main.go) of GoCV. I had to make a few minor changes to parse the downloaded image and encode it before returning it, but the important parts are the same.
-Download the function's code from [Github]() and let's deploy it using the faas cli.
+Download the function's code from [Github](https://github.com/matipan/openfaas-face-finder) and let's deploy it using the faas cli.
 Once you've downloaded the function go to the `stack.yml` file and change the following fields:
 
 * `provider > gateway`: set your openfaas gateway URL
 * `functions > face-finder > image`: change `matipan` for your own docker hub username.
 
-Now we simply have to deploy the function, this is as simple as running: `faas up`. This command will build the image, push it to the docker registry and deploy it in openfaas. Once the function is deployed head over to OpenFaaS dashboard and select your face-finder function. Provide a URL([like this one](http://dujye7n3e5wjl.cloudfront.net/photographs/1080-tall/time-100-influential-photos-ellen-degeneres-oscars-selfie-100.jpg)) to an image then select the *Download* option and hit invoke. This should download an image onto your machine, if it all worked it should be something like this:
+Now we simply have to deploy the function, this is as simple as running: `faas up`. This command will build the image, push it to the docker registry and deploy it on openfaas. Once the function is deployed head over to the OpenFaaS dashboard and select your face-finder function. Provide a URL([like this one](http://dujye7n3e5wjl.cloudfront.net/photographs/1080-tall/time-100-influential-photos-ellen-degeneres-oscars-selfie-100.jpg)) to an image then select the *Download* option and hit invoke. This should download an image onto your machine, if it all worked it should be something like this:
 
 ![Image with all the faces marked by a green rectangle](https://raw.githubusercontent.com/matipan/openfaas-face-finder/master/doc/result.jpg)
 
