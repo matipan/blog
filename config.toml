@@ -1,4 +1,4 @@
-baseurl = "https://blog.matiaspan.dev"
+baseurl = "https://blog.matiaspan.dev/"
 languageCode = "en-us"
 Title = "Matias Pan"
 theme = "hugo_theme_pickles"
@@ -17,12 +17,9 @@ copyright = "&copy; Copyright notice"
   authorwebsite = "blog.matiaspan.dev"
   avatar = "/images/profile.jpeg"
   contact = "mailto:matias.pan26@gmail.com)"
-  bio = "Test"
+  bio = "I'm a Software Engineer and Computer science student. In my free time I like to contribute to Open Source, play rugby and read books."
   # Short subtitle/tagline. This is displayed in the header.
   subtitle = "Blog"
-  # Logo image. This is displayed ogp image.
-  logo = "/path/to/logo"
-  favicon = "/path/to/favicon"
 
 [[menu.main]]
     name = "Blog"
