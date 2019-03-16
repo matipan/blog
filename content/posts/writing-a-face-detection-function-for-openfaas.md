@@ -1,5 +1,5 @@
 +++
-title = "Writing a face detection function for Openfaas"
+title = "Writing a face detection function for OpenFaaS"
 date = "2019-03-16"
 tags = ["go","gocv","openfaas","serverless"]
 categories = ["go","serverless"]

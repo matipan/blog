@@ -3,7 +3,7 @@ languageCode = "en-us"
 Title = "Matias Pan"
 theme = "hugo_theme_pickles"
 # Copyright notice. This is displayer in the footer.
-copyright = "&copy; Copyright notice"
+# copyright = "&copy; Copyright notice"
 
 [params]
   paginate = 10
