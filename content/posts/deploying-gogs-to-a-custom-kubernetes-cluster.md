@@ -1,7 +1,7 @@
 +++ 
 date = "2018-09-16"
-title = "Deploying Gogs to a custom Kubernetes cluster"
-tags = ["gogs","kubernetes","cluster"]
+title = "Deploying Gogs to a DigitalOcean Kubernetes cluster"
+tags = ["kubernetes", "digitalocean"]
 categories = ["kubernetes"]
 +++
 
