@@ -3,6 +3,7 @@ date = "2018-10-19"
 title = "Tracking color objects with GoCV"
 tags = ["go","gocv", "computer-vision", "pyimagesearch"]
 categories = ["gocv", "computer-vision", "pyimagesearch"]
+draft = "false"
 +++
 
 *Disclaimer*: this blog post is just a port of [Adrian's tutorial at pyimagesearch](https://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/) where he shows how to track a ball using Python and OpenCV. I only changed a few things here and there and rewrote it using Go and [GoCV](https://gocv.io). So all the credit should go to him

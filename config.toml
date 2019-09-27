@@ -3,7 +3,8 @@ languageCode = "en-us"
 Title = "Matias Pan"
 theme = "hugo_theme_pickles"
 # Copyright notice. This is displayer in the footer.
-# copyright = "&copy; Copyright notice"
+# copyright = "&copy; Matias Pan"
+copyright = ""
 
 [params]
   paginate = 10
@@ -13,18 +14,12 @@ theme = "hugo_theme_pickles"
   github = "matipan"
   gitlab = "matipan"
   linkedin = "matiaspan"
-  author = "Matias Pan"
-  authorwebsite = "blog.matiaspan.dev"
+  # authorwebsite = ""
+  disqus = "matipan"
   avatar = "/images/profile.jpeg"
-  contact = "mailto:matias.pan26@gmail.com)"
-  bio = "I'm a Software Engineer and Computer science student. In my free time I like to contribute to Open Source, play rugby and read books."
-  # Short subtitle/tagline. This is displayed in the header.
-  subtitle = "Blog"
-
-[[menu.main]]
-    name = "Blog"
-    url = "/"
-    weight = 1
+  contact = "mailto:matias.pan26@gmail.com"
+  bio = "I'm a Software Engineer and Computer Science student. In my free time I like to contribute to Open Source, play rugby and read books."
+  subtitle = ""
 
 [[menu.main]]
     name = "Tags"
