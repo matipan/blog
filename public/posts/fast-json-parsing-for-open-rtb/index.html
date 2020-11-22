@@ -20,7 +20,7 @@ type Request struct {
 	...
 }
 </code></pre><p>With that you can run this command that will generate functions that match the signature of <code>encoding/json.Marshaler</code> and <code>encoding/json.Unmarshaler</code>:</p><pre><code class=language-sh>easyjson -byte -pkg
-</code></pre><h4 id=using-jsonparser>Using jsonparser</h4><p>There are many ways to parse a JSON using the <code>jsonparser</code> library. Here, I went with an approach that has a lot of code but most of it is boiler plate, which means that adding new fields is relatively straight forward and does not require a lot of moving pieces to be modified. We start by defining all the fields that we OpenRTB request will have and storing the mapping of field id to the path were the field can be found:</p><pre><code class=language-go>type fieldIdx iota
+</code></pre><h4 id=using-jsonparser>Using jsonparser</h4><p>There are many ways to parse a JSON using the <code>jsonparser</code> library. I went with an approach that has a lot of code but most of it is boiler plate, which means that adding new fields is relatively straight forward and does not require a lot of modifications. We start by defining all the fields that the OpenRTB request will have and mapping their IDs to the path were it can be found:</p><pre><code class=language-go>type fieldIdx iota
 
 const (
 	fieldDevice fieldIdx = iota
@@ -62,7 +62,7 @@ func rtbBuildPaths(fields []rtbFieldDef) [][]string {
 	}
 	return ret
 }
-</code></pre><p>Once we&rsquo;ve defined the fields for this top level object, we can write the parsing function. This function basically iterates over the JSON one key at a time. For each key it finds it tries to map it to one of the keys we defined in the <code>reqPaths</code> variable. If it finds a match then it sets the value to the correspodning fields on the structure:</p><pre><code class=language-go>func (r *Request) UnmarshalJSONReq(b []byte) error {
+</code></pre><p>Once we&rsquo;ve defined the fields for this top level object we can write the parsing function. This function basically iterates over the JSON one key at a time. For each key it finds it tries to map it to one of the keys we defined in the <code>reqPaths</code> variable. If it finds a match then it sets the value to the corresponding fields on the structure:</p><pre><code class=language-go>func (r *Request) UnmarshalJSONReq(b []byte) error {
 	jsonparser.EachKey(b, func(idx int, value []byte, vt jsonparser.ValueType, err error) {
 		r.setField(idx, value, vt, err)
 	}, reqPaths...)
@@ -111,7 +111,7 @@ func (data *Request) setField(idx int, value []byte, _ jsonparser.ValueType, _ e
 		data.Regs.UnmarshalJSONReq(value)
 	}
 }
-</code></pre><p>With this you can start parsing the top level object. However, if you look at the <code>fieldApp</code> key for example, you can see that were are calling an <code>UnmarshalJSONReq</code> function of the <code>App</code> object. This structure does essentially the same thing than the top level one. It first defines the list of fields that we care about and their corresponding paths, and then implements the function that iterates over each key and sets the corresponding value:</p><pre><code class=language-go>const (
+</code></pre><p>With this you can start parsing the top level object. However, if you look at the <code>fieldApp</code> key for example you can see that we are calling an <code>UnmarshalJSONReq</code> function of the <code>App</code> object. This structure essentially does the same thing than the top level one. It first defines the list of fields that we care about and their corresponding paths and then implements the function that iterates over each key setting the corresponding values:</p><pre><code class=language-go>const (
 	fieldAppName fieldIdx = iota
 	fieldAppPubId
 	fieldAppBundle
@@ -160,7 +160,7 @@ func (a *App) UnmarshalJSONReq(b []byte) error {
 
 	return nil
 }
-</code></pre><p>Whenever you want to add a new object to the structure, then you need to implement all the boiler plate. However, if you just want to add a new field to an existing object the change is relatively straight forward. This is why <code>jsonparser</code> in terms of usability is worst than <code>json-iter</code> for example, but it is still better than <code>simdjson-go</code>.</p><h4 id=using-simdjson-go>Using simdjson-go</h4><p>There is a lot of code involved when parsing JSON with simdjson-go. Here I went with an approach that basically requires you to add more parsing code every time you add a new field. We could implement this with reflection that would hurt the performance even more.</p><p>Implementing a parser for <code>simdjson</code> requires one to start iterating over the tape that the library generated and start mapping field by field. We start by parsing the top level object and identifying it as a <code>simdjson.TypeObject</code>:</p><pre><code class=language-go>func (r *Request) UnmarshalJSONSimd(b []byte) error {
+</code></pre><p>If you want to add a new object to the structure you need to implement all this boiler plate. However, if you just want to add a new field to an existing object the change is relatively straight forward. This is why <code>jsonparser</code> in terms of usability is worst than <code>json-iter</code> but still better than <code>simdjson-go</code>.</p><h4 id=using-simdjson-go>Using simdjson-go</h4><p>There is a lot of code involved when parsing JSON with simdjson-go. Here I went with an approach that basically requires you to add more parsing code every time you add a new field. We could implement this with reflection like <code>encoding/json</code> does but that would hurt the performance even more.</p><p>Implementing a parser for <code>simdjson</code> requires one to start iterating over the tape that the library generated and map each field according to its type. We start by parsing the top level object and identifying it as a <code>simdjson.TypeObject</code>:</p><pre><code class=language-go>func (r *Request) UnmarshalJSONSimd(b []byte) error {
 	parsed, err := simdjson.Parse(b, nil)
 	if err != nil {
 		return err
@@ -193,7 +193,7 @@ func (a *App) UnmarshalJSONReq(b []byte) error {
 		}
 	}
 }
-</code></pre><p>Within the <code>simdjson.TypeObject</code> switch we can start parsing the OpenRTB request, but the request has many internal objects each of them can have a different type. This means that for each of those types we need to parse it separately. To keep this example brief we will only parse two types, <code>Object</code> and <code>Array</code>:</p><pre><code class=language-go>func (r *Request) parse(tmp *simdjson.Iter, obj *simdjson.Object) error {
+</code></pre><p>Within the <code>simdjson.TypeObject</code> switch we can start parsing the OpenRTB request, but the request has many internal objects and each of them can have a different type. This means that for every one of those types we need to parse it separately. To keep this example brief we will only parse two types, <code>Object</code> and <code>Array</code>:</p><pre><code class=language-go>func (r *Request) parse(tmp *simdjson.Iter, obj *simdjson.Object) error {
 	arr := &amp;simdjson.Array{}
 	for {
 		name, t, err := obj.NextElementBytes(tmp)
